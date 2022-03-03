@@ -31,7 +31,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
   Widget ChatMessageList() {
     //Real time Chat. Thats why StreamBuilder
     return StreamBuilder(
-        stream: chatMessageStream,
+        stream: chatMessageStream, //TODO stream to get TikTakToe data
+        //! Where is the stream comming from. Db methord?
         builder: (context, AsyncSnapshot snapshot) {
           return snapshot.hasData
               ? ListView.builder(
@@ -39,7 +40,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   itemBuilder: (context, index) {
                     return MessageTile(
                         snapshot.data!.docs[index].data()["message"],
-                        //TODO PROBLEM IN MESSAGE
                         message: snapshot.data!.docs[index].data()["message"],
                         isSendByMe:
                             snapshot.data!.docs[index].data()["sendBy"] ==
@@ -49,7 +49,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         });
   }
 
-  sendMessage() {
+  sendMessage() { //TODO in button TikTakToe
     if (message.text.isNotEmpty) {
       Map<String, dynamic> messageMap = {
         //Depends on what you have written in Firestore
@@ -65,7 +65,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   void initState() {
-    //TODO CHATROOM ID CHANGED
     databaseMethords.getConversationMessage(widget.chatRoomId).then((value) {
       setState(() {
         chatMessageStream = value;
@@ -82,7 +81,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           child: Stack(
             //box goes above the keyboard. Thats why Stack
             children: [
-              ChatMessageList(),
+              ChatMessageList(), //TODO TIKTAKTOE game
               Container(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -101,7 +100,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                   border: InputBorder.none))),
                       GestureDetector(
                         onTap: () {
-                          sendMessage();
+                          sendMessage(); //TODO in button TikTakToe
                         },
                         child: Container(
                             height: 40,

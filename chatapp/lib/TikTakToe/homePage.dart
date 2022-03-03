@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:chatapp/TikTakToe/TikTakToeDatabase.dart';
 import 'package:flutter/material.dart';
 
 import 'customDialog.dart';
@@ -21,11 +22,25 @@ class _HomePageState extends State<HomePage> {
   var player1;
   var player2;
   var activePlayer;
+  TikTakToeDatabase tikTakToeDatabase = TikTakToeDatabase();
+  Stream? getTikTakToeDataStream;
 
   @override
   void initState() {
-    super.initState();
     buttonsList = doInit();
+    //TODO FOR tIKtAKtOE STREAM
+    //todo ID is widget,chatroomid, needs modifiction
+    tikTakToeDatabase.getTikTakToeData('chatRoomId').then((value) {
+      setState(() {
+        getTikTakToeDataStream = value;
+      });
+    });
+    super.initState();
+  }
+
+//TODO  FOR MULTIPLAYER
+  void sendGameInformation(GameButton gameButton){
+    
   }
 
   List<GameButton> doInit() {
@@ -207,52 +222,57 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: Text("Tic Tac Toe"),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(10.0),
-                //! GriDelegate controlls the layout of GridView
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    //TODO Change Size here
-                    crossAxisCount: 3,
-                    childAspectRatio: 1.0,
-                    crossAxisSpacing: 9.0,
-                    mainAxisSpacing: 9.0),
-                itemCount: buttonsList!.length, // 9 buttons
-                itemBuilder: (context, i) => SizedBox(
-                  width: 100.0,
-                  height: 100.0,
-                  child: RaisedButton(
-                    padding: const EdgeInsets.all(8.0),
-                    //! if enabled, call a function
-                    onPressed: buttonsList![i].enabled
-                        ? () => playGame(buttonsList![i])
-                        : null,
+        body: StreamBuilder(
+            stream: getTikTakToeDataStream,
+            builder: (context, snapshot) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                    child: GridView.builder(
+                      padding: const EdgeInsets.all(10.0),
+                      //! GriDelegate controlls the layout of GridView
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          //TODO Change Size here
+                          crossAxisCount: 3,
+                          childAspectRatio: 1.0,
+                          crossAxisSpacing: 9.0,
+                          mainAxisSpacing: 9.0),
+                      itemCount: buttonsList!.length, // 9 buttons
+                      itemBuilder: (context, i) => SizedBox(
+                        width: 100.0,
+                        height: 100.0,
+                        child: RaisedButton(
+                          padding: const EdgeInsets.all(8.0),
+                          //! if enabled, call a function
+                          onPressed: buttonsList![i].enabled
+                              ? () => playGame(buttonsList![i])
+                              : null,
+                          child: Text(
+                            //! Text innitially null
+                            buttonsList![i].text,
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 20.0),
+                          ),
+                          //! Innitially grey
+                          color: buttonsList![i].bg,
+                          disabledColor: buttonsList![i].bg,
+                        ),
+                      ),
+                    ),
+                  ),
+                  RaisedButton(
                     child: Text(
-                      //! Text innitially null
-                      buttonsList![i].text,
+                      "Reset",
                       style: TextStyle(color: Colors.white, fontSize: 20.0),
                     ),
-                    //! Innitially grey
-                    color: buttonsList![i].bg,
-                    disabledColor: buttonsList![i].bg,
-                  ),
-                ),
-              ),
-            ),
-            RaisedButton(
-              child: Text(
-                "Reset",
-                style: TextStyle(color: Colors.white, fontSize: 20.0),
-              ),
-              color: Colors.red,
-              padding: const EdgeInsets.all(20.0),
-              onPressed: resetGame,
-            )
-          ],
-        ));
+                    color: Colors.red,
+                    padding: const EdgeInsets.all(20.0),
+                    onPressed: resetGame,
+                  )
+                ],
+              );
+            }));
   }
 }
