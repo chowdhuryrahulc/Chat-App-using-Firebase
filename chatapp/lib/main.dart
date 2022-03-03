@@ -1,8 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 //TODO UNDERSTOOD: search.dart, conversationscreen.dart, main.dart
 
-//! Error:- async await in initstate is the reason we see Authenticate() for 2 sec.
-
 import 'package:chatapp/helper/Authenticate.dart';
 import 'package:chatapp/helper/helperfunctions.dart';
 import 'package:chatapp/views/chatRoomScreen.dart';
@@ -18,8 +16,17 @@ import 'package:random_string/random_string.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  getLoggedInState();
   await Firebase.initializeApp();
   runApp(const MyApp());
+}
+
+bool? userIsLoggedIn;
+
+getLoggedInState() {
+  Helperfunctions.getuserLoggedInSharedPreference().then((value) {
+    userIsLoggedIn = value;
+  });
 }
 
 class MyApp extends StatefulWidget {
@@ -30,23 +37,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool? userIsLoggedIn;
-  @override
-  void initState() {
-    // Using SharedPreferences to check if user is already loggedIn
-    getLoggedInState();
-    super.initState();
-  }
-
-//TODO... Removed async await
-  getLoggedInState() {
-    Helperfunctions.getuserLoggedInSharedPreference().then((value) {
-      setState(() {
-        userIsLoggedIn = value;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -59,7 +49,7 @@ class _MyAppState extends State<MyApp> {
       ),
       home: userIsLoggedIn != null
           ? userIsLoggedIn!
-              ? ChatRoom() //!AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+              ? ChatRoom()
               : Authenticate()
           : Container(
               child: Center(

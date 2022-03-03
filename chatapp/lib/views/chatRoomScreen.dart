@@ -12,14 +12,14 @@ import 'package:chatapp/views/signIn.dart';
 import 'package:chatapp/widgits/widgits.dart';
 import 'package:flutter/material.dart';
 
+import '../TikTakToe/homePage.dart';
+
 class ChatRoom extends StatefulWidget {
   const ChatRoom({Key? key}) : super(key: key);
 
   @override
   _ChatRoomState createState() => _ChatRoomState();
 }
-
-String? _myName;
 
 class _ChatRoomState extends State<ChatRoom> {
   Authmethords authmethords = Authmethords();
@@ -48,15 +48,15 @@ class _ChatRoomState extends State<ChatRoom> {
         });
   }
 
-  // @override
-  // void initState() {
-  //   getUserInfo();
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    getUserInfo();
+    super.initState();
+  }
 
   //bcoz we cant use async in initState
   Future getUserInfo() async {
-    _myName = await Helperfunctions.getuserNameSharedPreference();
+    Constants.myName = (await Helperfunctions.getuserNameSharedPreference())!;
     databaseMethords.getChatRoom(Constants.myName).then((value) {
       setState(() {
         chatRoomStream = value;
@@ -65,7 +65,8 @@ class _ChatRoomState extends State<ChatRoom> {
     // setState(() async {
     //   // Constants.myName = (await Helperfunctions.getuserNameSharedPreference())!;
     // });
-    print("$_myName");
+    // print('GETTING USER INFO');
+    // print("$_myName");
   }
 
   @override
@@ -91,6 +92,7 @@ class _ChatRoomState extends State<ChatRoom> {
         ],
       ),
       // body: chatRoomList(),
+      // body: HomePage(),
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.search),
           onPressed: () {

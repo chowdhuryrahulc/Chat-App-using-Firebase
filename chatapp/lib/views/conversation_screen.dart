@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names
 //TODO UNDERSTOOD......
 
 //! ChatStream gets value from initState(). Snapshots from getConversationMessage()
@@ -28,7 +28,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
   TextEditingController message = TextEditingController();
   Stream? chatMessageStream;
 
-//! Do something about Constants.name
   Widget ChatMessageList() {
     //Real time Chat. Thats why StreamBuilder
     return StreamBuilder(
@@ -40,6 +39,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   itemBuilder: (context, index) {
                     return MessageTile(
                         snapshot.data!.docs[index].data()["message"],
+                        //TODO PROBLEM IN MESSAGE
+                        message: snapshot.data!.docs[index].data()["message"],
                         isSendByMe:
                             snapshot.data!.docs[index].data()["sendBy"] ==
                                 Constants.myName);
@@ -64,6 +65,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   void initState() {
+    //TODO CHATROOM ID CHANGED
     databaseMethords.getConversationMessage(widget.chatRoomId).then((value) {
       setState(() {
         chatMessageStream = value;
@@ -84,6 +86,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
               Container(
                 alignment: Alignment.bottomCenter,
                 child: Container(
+                  // BottomTextField
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   color: Color(0x54FFFFFF),
                   child: Row(
@@ -123,9 +126,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
 }
 
 class MessageTile extends StatelessWidget {
-  const MessageTile(data, {Key? key, this.message, required this.isSendByMe})
+  const MessageTile(data,
+      {Key? key, required this.message, required this.isSendByMe})
       : super(key: key);
-  final String? message;
+  final String message;
   final bool isSendByMe;
   //SendbyMe = true means blue
 
@@ -157,7 +161,7 @@ class MessageTile extends StatelessWidget {
                     bottomRight: Radius.circular(23),
                   )),
         child: Text(
-          message!,
+          message,
           style: TextStyle(color: Colors.white, fontSize: 17),
         ),
       ),

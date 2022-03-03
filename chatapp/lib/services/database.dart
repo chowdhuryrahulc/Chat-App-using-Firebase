@@ -2,11 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseMethords {
   getUserByUsername(String username) async {
+    //!     in user collection, skips docoments, 
+    //!     searches for name (in 2nd collection).
+    //todo  but from where does it store users from Authenticate? 
+    //      in DatabaseMethords uploadUserInfo
+    
     return await FirebaseFirestore.instance
         .collection('users')
         .where("name", isEqualTo: username)
-        .get(); //!Query statement
-    //! gives QuerySnapshot as value
+        .get(); // Query statement
+    // gives QuerySnapshot as value
     //doesnt download any data, but sends query to database
     //getdocoments() is changed to get()
     //docoment() changed to doc()
@@ -17,12 +22,14 @@ class DatabaseMethords {
     return await FirebaseFirestore.instance
         .collection('users')
         .where("email", isEqualTo: useremail)
-        .get(); //!Query statement
+        .get(); // Query statement
   }
 
   uploadUserInfo(userMap) {
+    //! Upload data to FireBase
     //Data stored in Database is a Map. Map has key value pair.
-    //Convert to Map before uploading
+    //Convert to Map before uploading.
+        //! Map is 'name': ...., 'email': ....
     //See signUp screen for same
     FirebaseFirestore.instance.collection('users').add(userMap).catchError((e) {
       print(e.toString());

@@ -15,6 +15,8 @@ class Helperfunctions {
 
 //! USED IN SIGNIN AND SIGNUP [both saveuserNameSharedPreference & saveuserEmailSharedPreference]
   static Future<bool> saveuserNameSharedPreference(String userName) async {
+    print('USERNAME INSERTED INTO SHARED PREFERENCES');
+    print(userName);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return await prefs.setString(sharedPreferenceUserNameKey, userName);
   }
