@@ -10,7 +10,9 @@ class DatabaseMethords {
     return await FirebaseFirestore.instance
         .collection('users')
         .where("name", isEqualTo: username)
-        .get(); // Query statement
+        .get(); 
+        
+        // Query statement
     // gives QuerySnapshot as value
     //doesnt download any data, but sends query to database
     //getdocoments() is changed to get()

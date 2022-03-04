@@ -13,8 +13,10 @@ import 'package:chatapp/views/conversation_screen.dart';
 import 'package:chatapp/widgits/widgits.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../TikTakToe/homePage.dart';
+import '../TikTakToe/providers.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -45,10 +47,11 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   // Create Chatroom, send user to Conversation screen
-  //If user array in Firebase contains the username then show
+  // If user array in Firebase contains the username then show
   createChatRoomAndStartConversation({String? userName}) {
     //? Here userName is raw username. eg:- RawTech, terminator etc.
     if (userName != Constants.myName) {
+      
       //See bottommost function, you provide 2 string and it gives chatroomId
       String chatRoomId =
           getChatRoomId(userName!, Constants.myName); //!Generate unique id
@@ -79,8 +82,10 @@ class _SearchScreenState extends State<SearchScreen> {
       //?this returns QuerySnapshot
 
       setState(() {
+        // context.read<recieverNameProvider>().getRecieverName(val);
         searchSnapshot = val;
-        // print(val.toString());
+    // print('RECIEVERSSS');
+    //     print(searchSnapshot!.docs[1]["name"]);
         // print(val);
       });
     });
@@ -108,6 +113,7 @@ class _SearchScreenState extends State<SearchScreen> {
           Spacer(),
           GestureDetector(
             onTap: () {
+        context.read<recieverNameProvider>().getRecieverName(userName);
               createChatRoomAndStartConversation(userName: userName);
             },
             child: Container(
@@ -177,7 +183,8 @@ class _SearchScreenState extends State<SearchScreen> {
 //Provide this Function 2 String and it will provide chatroomId
 //! Generate unique ID
 getChatRoomId(String recieversName, String myName) {
-  print(recieversName);
+  // print(recieversName);
+        // context.read<recieverNameProvider>().getRecieverName(val);
   print(getInitials(recieversName));
   int recieve = getInitials(recieversName).codeUnitAt(0);
   // print(getInitials(myName).codeUnitAt(0));

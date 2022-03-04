@@ -4,7 +4,7 @@ class TikTakToeDatabase {
   getTikTakToeData(String chatRoomId) async {
     //TODO COPY OF GETCONVERSATIONMESSAGE
     // Gives stream of database data
-    return await FirebaseFirestore.instance
+    return FirebaseFirestore.instance
         .collection("GameRoom")
         .doc(chatRoomId)
         .collection("tikTakToeDynamic")
@@ -24,23 +24,53 @@ class TikTakToeDatabase {
         .catchError((e) {});
   }
 
-  sendGameButtonData(String chatRoomId, messageMap) {
+  getButtonData(String chatRoomId) async {
+    return FirebaseFirestore.instance
+        .collection("GameRoom")
+        .doc(chatRoomId)
+        .collection("buttonListData")
+        .snapshots();
+  }
+
+  sendGameButtonData(String chatRoomId, messageMap, int gameId) {
     FirebaseFirestore.instance
         .collection("GameRoom")
         .doc(chatRoomId)
         .collection("buttonListData")
-        //todo add or update
-        .add(messageMap)
+        .doc(gameId.toString())
+        .set(messageMap)
         .catchError((e) {
       print(e);
     });
   }
 
-  updateGameButtonData(String chatRoomId, messageMap) {
+  updateGameButtonData(String chatRoomId, messageMap, int gameId) {
     FirebaseFirestore.instance
         .collection("GameRoom")
         .doc(chatRoomId)
-        .collection("buttonListData").doc()
+        .collection("buttonListData")
+        .doc(gameId.toString())
         .update(messageMap);
+  }
+updateActivePlayerInFirestore(String activePlayer, String chatRoomId) {
+    Map<String, dynamic> activePlayerMap = {
+        'activePlayer': activePlayer
+      };
+    FirebaseFirestore.instance
+        .collection("GameRoom")
+        .doc(chatRoomId)
+        .collection("ActivePlayer")
+        .doc('active')
+        .update(activePlayerMap);
+    // .add(activePlayer);
+  }
+  saveActivePlayerInFirestore(var activePlayerMap, String chatRoomId) {
+    FirebaseFirestore.instance
+        .collection("GameRoom")
+        .doc(chatRoomId)
+        .collection("ActivePlayer")
+        .doc('active')
+        .set(activePlayerMap);
+    // .add(activePlayer);
   }
 }
