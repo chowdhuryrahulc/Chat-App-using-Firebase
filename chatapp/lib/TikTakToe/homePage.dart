@@ -1,26 +1,23 @@
-// ignore_for_file: deprecated_member_use, prefer_const_constructors, prefer_typing_uninitialized_variables
+// ignore_for_file: deprecated_member_use, prefer_const_constructors, prefer_typing_uninitialized_variables, avoid_print
 
 import 'dart:math';
-
 import 'package:chatapp/TikTakToe/TikTakToeDatabase.dart';
 import 'package:flutter/material.dart';
-
 import 'customDialog.dart';
 import 'gameButton.dart';
-// import 'package:tictactoe/custom_dailog.dart';
-// import 'package:tictactoe/game_button.dart';
-// import 'package:tiktaktoe/customDialog.dart';
-// import 'package:tiktaktoe/gameButton.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({Key? key, required this.gameRoomId}) : super(key: key);
+  final String gameRoomId;
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   List<GameButton>? buttonsList;
-  var player1;
-  var player2;
+  List<int> player1 = [];
+  List<int> player2 = [];
   var activePlayer;
   TikTakToeDatabase tikTakToeDatabase = TikTakToeDatabase();
   Stream? getTikTakToeDataStream;
@@ -28,9 +25,23 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     buttonsList = doInit();
+
+    int id = 0;
+    String text = '';
+    // Color bg = Colors.grey;
+    String bg = 'grey';
+    bool enabled = true;
+
+    Map<String, dynamic> gameMap = {
+      'id': id,
+      'text': text,
+      'background': bg,
+      'enabled': enabled
+    };
+    tikTakToeDatabase.sendGameButtonData(widget.gameRoomId, gameMap);
+
     //TODO FOR tIKtAKtOE STREAM
-    //todo ID is widget,chatroomid, needs modifiction
-    tikTakToeDatabase.getTikTakToeData('chatRoomId').then((value) {
+    tikTakToeDatabase.getTikTakToeData(widget.gameRoomId).then((value) {
       setState(() {
         getTikTakToeDataStream = value;
       });
@@ -38,10 +49,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-//TODO  FOR MULTIPLAYER
-  void sendGameInformation(GameButton gameButton){
-    
-  }
+// FOR MULTIPLAYER
+  // void sendGameInformation(GameButton gameButton) {}
 
   List<GameButton> doInit() {
     //TODO player2 is the other person.
@@ -50,8 +59,7 @@ class _HomePageState extends State<HomePage> {
     player2 = [];
     activePlayer = 1;
     //! ActiveButton toggles btw 1 and 2 in void playgame setState.
-
-    List<GameButton> gameButtons = <GameButton>[
+    List<GameButton> gameButtons = [
       // Used to uniquely identiy the 9 GameButton.
       GameButton(id: 1),
       GameButton(id: 2),
@@ -73,33 +81,57 @@ class _HomePageState extends State<HomePage> {
       if (activePlayer == 1) {
         gameButton.text = "X";
         gameButton.bg = Colors.red;
-        //! After player 1, player 2 gets chance
-        activePlayer = 2;
+        // After player 1, player 2 gets chance
         // Adding id to the list.
         print(gameButton.id);
-        player1.add(gameButton.id);
+        // player1.add(gameButton.id);
+
+        //TODO UPDATE IN FIRESTORE.
+        Map<String, List> playersListMap = {
+          activePlayer.toString(): player1,
+        };
+        // tikTakToeDatabase.updateTikTakToeData('widget.gameRoomId', playersListMap);
+        tikTakToeDatabase.sendTikTakToeData(widget.gameRoomId, playersListMap);
+
+        //TODO BUTTON DATA UPDATING
+        int id2 = 1;
+        String text2 = 'asdf';
+        // Color bg = Colors.grey;
+        String bg2 = 'red';
+        bool enabled = false;
+
+        Map<String, dynamic> updateButtonDataMap = {
+          'id': id2,
+          'text': text2,
+          'background': bg2,
+          'enabled': enabled
+        };
+        tikTakToeDatabase.updateGameButtonData(
+            widget.gameRoomId, updateButtonDataMap);
+        // databaseMethords.addConversationMessage(widget.chatRoomId, messageMap);
+        activePlayer = 2;
       } else {
-        //! when player2 plays.
+        // when player2 plays.
         gameButton.text = "0";
         gameButton.bg = Colors.black;
         activePlayer = 1;
-        player2.add(gameButton.id);
+        // player2.add(gameButton.id);
       }
-      gameButton.enabled = false; //! so that it is not played again.
+      gameButton.enabled = false; // so that it is not played again.
       int winner = checkWinner();
       if (winner == -1) {
         // -1 by default.
-        //! .every means we have filled all the boxes.
-        //! means game is compleate.
+        // .every means we have filled all the boxes.
+        // means game is compleate.
         if (buttonsList!.every((p) => p.text != "")) {
           showDialog(
               context: context,
               builder: (_) => CustomDialog("Game Tied",
                   "Press the reset button to start again.", resetGame));
         } else {
-          //! if there is a blank, means game is still going on. means autoplay.
+          // if there is a blank, means game is still going on. means autoplay.
           activePlayer == 2 ? autoPlay() : null;
-          //! Active player is 2, means 2 is playing.
+          // Active player is 2, means 2 is playing.
         }
       }
     });
@@ -232,9 +264,9 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: GridView.builder(
                       padding: const EdgeInsets.all(10.0),
-                      //! GriDelegate controlls the layout of GridView
+                      // GriDelegate controlls the layout of GridView
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          //TODO Change Size here
+                          //TO Change Size here
                           crossAxisCount: 3,
                           childAspectRatio: 1.0,
                           crossAxisSpacing: 9.0,
@@ -245,7 +277,7 @@ class _HomePageState extends State<HomePage> {
                         height: 100.0,
                         child: RaisedButton(
                           padding: const EdgeInsets.all(8.0),
-                          //! if enabled, call a function
+                          // if enabled, call a function
                           onPressed: buttonsList![i].enabled
                               ? () => playGame(buttonsList![i])
                               : null,

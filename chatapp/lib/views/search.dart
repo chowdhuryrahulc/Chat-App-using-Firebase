@@ -14,6 +14,8 @@ import 'package:chatapp/widgits/widgits.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../TikTakToe/homePage.dart';
+
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
 
@@ -64,7 +66,9 @@ class _SearchScreenState extends State<SearchScreen> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  ConversationScreen(chatRoomId: chatRoomId)));
+              HomePage(gameRoomId: chatRoomId)
+                  // ConversationScreen(chatRoomId: chatRoomId)
+                  ));
     } else {
       print("You cannot send message to yourself");
     }
